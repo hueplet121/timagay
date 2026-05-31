@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Справочник по HTML — ЛР №15</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Unbounded:wght@400;600;800&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e12;
+    --surface: #16161e;
+    --surface2: #1e1e2a;
+    --border: #2a2a3a;
+    --accent: #7c6fff;
+    --accent2: #ff6f91;
+    --accent3: #6fffd4;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --code-bg: #0a0a10;
+    --radius: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* GRID NOISE BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,111,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,111,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+  .header-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.1s forwards;
+  }
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.2s forwards;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.3s forwards;
+  }
+
+  /* NAV TABS */
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.4s forwards;
+  }
+  .tab {
+    padding: 7px 18px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'Golos Text', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--text); }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(124,111,255,0.35);
+  }
+
+  /* SECTIONS */
+  .section { display: none; animation: fadeUp 0.3s ease forwards; }
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(124,111,255,0.35); }
+
+  .card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
+  }
+  .card-title .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .card-title .dot.g { background: var(--accent3); box-shadow: 0 0 8px var(--accent3); }
+  .card-title .dot.p { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
+
+  /* CODE BLOCKS */
+  pre, .code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #c8c8e8;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 10px 0;
+  }
+  .kw  { color: #7c6fff; }
+  .at  { color: #ff6f91; }
+  .val { color: #6fffd4; }
+  .cm  { color: #555570; font-style: italic; }
+
+  /* TABLES */
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .ref-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+  .ref-table td:last-child { color: var(--muted); }
+
+  /* SANDBOX */
+  .sandbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  @media (max-width: 600px) { .sandbox-grid { grid-template-columns: 1fr; } }
+
+  .sandbox-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sandbox-label::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 6px var(--accent3);
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #c8c8e8;
+    resize: vertical;
+    min-height: 160px;
+    line-height: 1.7;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  .preview-pane {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    min-height: 160px;
+    font-size: 14px;
+    color: #111;
+    overflow: auto;
+  }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Golos Text', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(124,111,255,0.3);
+  }
+  .btn-primary:hover { background: #6a5fee; box-shadow: 0 0 28px rgba(124,111,255,0.5); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border-color: var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+  /* COLOR SWATCHES */
+  .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 12px; }
+  .swatch {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .swatch:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .swatch-color { height: 40px; }
+  .swatch-info { padding: 6px 10px; background: var(--surface2); }
+  .swatch-name { font-size: 11px; font-weight: 600; color: var(--text); }
+  .swatch-hex { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* STEP LIST */
+  .steps { list-style: none; }
+  .steps li {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    align-items: flex-start;
+  }
+  .steps li .num {
+    min-width: 26px; height: 26px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .steps li span { color: var(--muted); line-height: 1.6; }
+  .steps li span code { color: var(--accent3); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* RULE ROWS */
+  .rules { list-style: none; }
+  .rules li {
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .rules li::before { content: '→'; color: var(--accent); flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+  .rules li:last-child { border-bottom: none; }
+  .rules li b { color: var(--text); font-weight: 500; }
+  .rules li code { color: var(--accent3); font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+
+  /* TAG CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--accent3);
+    border: 1px solid rgba(111,255,212,0.15);
+  }
+
+  /* BADGE */
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 500;
+    background: rgba(124,111,255,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(124,111,255,0.3);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* PROGRESS BAR (section steps) */
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 99px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* TOOLTIP on copy */
+  .copied-msg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent3);
+    margin-left: 6px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .copied-msg.show { opacity: 1; }
+
+  /* ═══════════════════════════════════════════
+     AI CHAT — REDESIGN
+  ═══════════════════════════════════════════ */
+
+  /* Обёртка всего чата */
+  .ai-wrap {
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 8px 40px rgba(0,0,0,.35);
+  }
+
+  /* ── Шапка ── */
+  .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    position: relative;
+  }
+  .ai-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+    opacity: .5;
+  }
+
+  /* Аватар-робот */
+  .ai-avatar {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(124,111,255,.4);
+    position: relative;
+  }
+  .ai-avatar::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    z-index: -1;
+    opacity: .35;
+    filter: blur(6px);
+  }
+
+  /* Статус с пульсирующей точкой */
+  .ai-status-row { display: flex; align-items: center; gap: 6px; }
+  .ai-status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 6px var(--accent3);
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .5; transform: scale(.75); }
+  }
+  .ai-status-dot.offline { background: #ff6f91; box-shadow: 0 0 6px #ff6f91; animation: none; }
+
+  /* Панель кнопок в шапке */
+  .ai-header-actions {
+    margin-left: auto;
+    display: flex; gap: 5px; align-items: center; flex-wrap: wrap;
+  }
+  .ai-icon-btn {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ai-icon-btn:hover { color: var(--text); border-color: var(--accent); background: rgba(124,111,255,.08); }
+  .ai-icon-btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
+  .ai-icon-btn.danger:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,111,145,.08); }
+
+  /* ── Лента сообщений ── */
+  .ai-feed {
+    height: 440px;
+    overflow-y: auto;
+    padding: 20px 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--bg);
+    scroll-behavior: smooth;
+  }
+  .ai-feed::-webkit-scrollbar { width: 4px; }
+  .ai-feed::-webkit-scrollbar-track { background: transparent; }
+  .ai-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  .ai-feed::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Строка сообщения */
+  .ai-msg {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    animation: msgIn .25s ease both;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ai-msg--user { flex-direction: row-reverse; }
+
+  /* Мини-аватар в ленте */
+  .ai-msg-avatar {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .ai-msg--bot  .ai-msg-avatar { background: linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow: 0 0 10px rgba(124,111,255,.3); }
+  .ai-msg--user .ai-msg-avatar { background: var(--surface2); border: 1px solid var(--border); }
+
+  /* Пузырь */
+  .ai-bubble {
+    max-width: 78%;
+    padding: 11px 15px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    position: relative;
+  }
+  .ai-msg--bot .ai-bubble {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+  .ai-msg--bot .ai-bubble:hover { border-color: rgba(124,111,255,.3); }
+  .ai-msg--user .ai-bubble {
+    background: linear-gradient(135deg, rgba(124,111,255,.22), rgba(255,111,145,.12));
+    border: 1px solid rgba(124,111,255,.35);
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 12px rgba(124,111,255,.12);
+  }
+  .ai-bubble code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent3);
+    border: 1px solid rgba(111,255,212,.12);
+  }
+  .ai-bubble b { color: #fff; font-weight: 600; }
+
+  /* ── Блок с кодом внутри пузыря ── */
+  .ai-code-block {
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--code-bg);
+  }
+  .ai-code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ai-code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ai-code-lang::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 5px var(--accent2);
+  }
+  .ai-code-actions { display: flex; gap: 5px; }
+  .ai-copy-btn {
+    height: 24px; padding: 0 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 10px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .ai-copy-btn:hover { color: var(--text); border-color: var(--accent); }
+  .ai-copy-btn.apply { border-color: rgba(111,255,212,.3); color: var(--accent3); }
+  .ai-copy-btn.apply:hover { background: rgba(111,255,212,.08); }
+  .ai-bubble pre {
+    margin: 0;
+    padding: 12px 14px;
+    border-left: none;
+    border-radius: 0;
+    border: none;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    background: var(--code-bg);
+    color: #c8c8e8;
+  }
+
+  /* ── Превью iframe ── */
+  .ai-preview-toggle {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 24px; padding: 0 10px;
+    background: transparent;
+    border: 1px solid rgba(111,255,212,.25);
+    border-radius: 6px;
+    color: var(--accent3);
+    font-size: 10px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all .15s;
+  }
+  .ai-preview-toggle:hover { background: rgba(111,255,212,.08); border-color: var(--accent3); }
+  .ai-preview-frame {
+    display: none;
+    width: 100%; height: 300px;
+    border: none;
+    border-top: 1px solid var(--border);
+    background: #fff;
+  }
+  .ai-preview-frame.open { display: block; }
+
+  /* ── Индикатор печати ── */
+  .ai-typing {
+    display: flex; align-items: center; gap: 5px;
+    padding: 11px 15px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+  }
+  .ai-typing span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    animation: typingDot 1.2s infinite;
+  }
+  .ai-typing span:nth-child(2) { animation-delay: .2s; }
+  .ai-typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes typingDot {
+    0%, 60%, 100% { opacity: .25; transform: scale(.7); }
+    30% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── Быстрые подсказки ── */
+  .ai-hints {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .ai-hint-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .ai-hint-btn:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    background: rgba(124,111,255,.07);
+    transform: translateY(-1px);
+  }
+
+  /* ── Панель ввода ── */
+  .ai-input-area {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .ai-input-box {
+    display: flex; gap: 8px; align-items: flex-end;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px 8px 6px 14px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .ai-input-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,111,255,.12);
+  }
+  #ai-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+    min-height: 36px;
+    max-height: 110px;
+    line-height: 1.55;
+    padding: 4px 0;
+  }
+  .ai-input-actions {
+    display: flex; flex-direction: column; gap: 5px; flex-shrink: 0;
+  }
+  .ai-send-code-btn {
+    height: 30px; padding: 0 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .ai-send-code-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+  .ai-send-btn {
+    height: 36px; padding: 0 18px;
+    background: linear-gradient(135deg, var(--accent), #6a5fee);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Golos Text', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 2px 12px rgba(124,111,255,.35);
+    white-space: nowrap;
+  }
+  .ai-send-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,111,255,.5); }
+  .ai-send-btn:active { transform: translateY(0); }
+  .ai-send-btn:disabled { opacity: .5; cursor: default; pointer-events: none; }
+
+  /* Бейдж «сохранён» */
+  .chat-saved-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 2px 8px; border-radius: 99px;
+    background: rgba(111,255,212,.1); color: var(--accent3);
+    border: 1px solid rgba(111,255,212,.25);
+    transition: opacity .4s; opacity: 0;
+  }
+
+  #ai-input:focus { border-color: var(--accent); }
+
+  /* ── История версий — модальное окно ── */
+  .history-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .history-modal.open {
+    display: flex;
+  }
+  .history-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 680px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,.6);
+    animation: fadeUp .2s ease both;
+  }
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    flex-shrink: 0;
+  }
+  .history-list {
+    overflow-y: auto;
+    flex: 1;
+  }
+  .history-list::-webkit-scrollbar { width: 4px; }
+  .history-list::-webkit-scrollbar-track { background: transparent; }
+  .history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  .history-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-item-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    transition: background .15s;
+  }
+  .history-item-head:hover { background: rgba(124,111,255,.05); }
+  .history-item-pre {
+    display: none;
+    padding: 10px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #888899;
+    background: var(--code-bg);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .history-item-pre.open { display: block; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="header-tag">ЛР № 15 · HTML</div>
+    <h1>Справочник<br>по HTML</h1>
+    <p class="header-sub">// интерактивная шпаргалка · кликай · практикуйся</p>
+  </header>
+
+  <nav class="nav">
+    <button class="tab active" onclick="show('structure',this)">Структура</button>
+    <button class="tab" onclick="show('text',this)">Текст</button>
+    <button class="tab" onclick="show('img',this)">Картинки</button>
+    <button class="tab" onclick="show('links',this)">Ссылки</button>
+    <button class="tab" onclick="show('lists',this)">Списки</button>
+    <button class="tab" onclick="show('tables',this)">Таблицы</button>
+    <button class="tab" onclick="show('colors',this)">Цвета</button>
+    <button class="tab" onclick="show('sandbox',this)">⚡ Песочница</button>
+    <button class="tab" onclick="show('ai',this)">🤖 ИИ-помощник</button>
+  </nav>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:12%"></div></div>
+
+  <!-- ░░ СТРУКТУРА ░░ -->
+  <div class="section active" id="s-structure">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Скелет любой HTML-страницы</div>
+      <pre><span class="kw">&lt;html&gt;</span>
+  <span class="kw">&lt;head&gt;</span>
+    <span class="kw">&lt;title&gt;</span>Текст на вкладке браузера<span class="kw">&lt;/title&gt;</span>
+  <span class="kw">&lt;/head&gt;</span>
+  <span class="kw">&lt;body</span> <span class="at">bgcolor</span>=<span class="val">"lightyellow"</span><span class="kw">&gt;</span>
+
+    Всё видимое содержание — здесь
+
+  <span class="kw">&lt;/body&gt;</span>
+<span class="kw">&lt;/html&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Атрибуты тега &lt;body&gt;</div>
+      <table class="ref-table">
+        <tr><th>Атрибут</th><th>Что делает</th></tr>
+        <tr><td>bgcolor="цвет"</td><td>Цвет фона страницы</td></tr>
+        <tr><td>text="цвет"</td><td>Цвет обычного текста</td></tr>
+        <tr><td>link="цвет"</td><td>Цвет непосещённой ссылки</td></tr>
+        <tr><td>vlink="цвет"</td><td>Цвет посещённой ссылки</td></tr>
+        <tr><td>alink="цвет"</td><td>Цвет ссылки при нажатии</td></tr>
+        <tr><td>leftmargin=20</td><td>Отступ слева в пикселях</td></tr>
+        <tr><td>topmargin=10</td><td>Отступ сверху в пикселях</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot p"></span> Важные правила</div>
+      <ul class="rules">
+        <li>Enter и пробелы в коде <b>игнорируются</b> браузером — переносы только через <code>&lt;br&gt;</code></li>
+        <li>Тег с ошибкой браузер <b>молча пропустит</b> — сообщений об ошибке не будет</li>
+        <li>Атрибуты — <b>только в открывающем</b> теге, в закрывающем их нет</li>
+        <li>Вложенные теги закрывать в <b>обратном порядке</b>: <code>&lt;b&gt;&lt;i&gt;текст&lt;/i&gt;&lt;/b&gt;</code></li>
+        <li>Файл сохранять с кодировкой <b>UTF-8</b> и расширением <code>.html</code></li>
+        <li>Картинки класть в <b>ту же папку</b>, что и html-файл</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ░░ ТЕКСТ ░░ -->
+  <div class="section" id="s-text">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Заголовки H1–H6</div>
+      <pre><span class="kw">&lt;h1</span> <span class="at">align</span>=<span class="val">"center"</span><span class="kw">&gt;</span>Самый крупный<span class="kw">&lt;/h1&gt;</span>
+<span class="kw">&lt;h2</span> <span class="at">align</span>=<span class="val">"left"</span><span class="kw">&gt;</span>Поменьше<span class="kw">&lt;/h2&gt;</span>
+<span class="kw">&lt;h3</span> <span class="at">align</span>=<span class="val">"right"</span><span class="kw">&gt;</span>Ещё меньше<span class="kw">&lt;/h3&gt;</span>
+<span class="cm">&lt;!-- align: left / center / right / justify --&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Шрифт — тег &lt;font&gt;</div>
+      <table class="ref-table">
+        <tr><th>Атрибут</th><th>Пример</th><th>Описание</th></tr>
+        <tr><td>size="1–7"</td><td>size="5"</td><td>Размер (3 — базовый = 12pt)</td></tr>
+        <tr><td>color="цвет"</td><td>color="#FF0000"</td><td>Цвет текста</td></tr>
+        <tr><td>face="шрифт"</td><td>face="Arial"</td><td>Гарнитура шрифта</td></tr>
+      </table>
+      <pre style="margin-top:12px"><span class="kw">&lt;font</span> <span class="at">size</span>=<span class="val">"5"</span> <span class="at">color</span>=<span class="val">"#FF0000"</span> <span class="at">face</span>=<span class="val">"Arial"</span><span class="kw">&gt;</span>Текст<span class="kw">&lt;/font&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot p"></span> Начертание</div>
+      <div class="chips">
+        <span class="chip">&lt;b&gt; жирный</span>
+        <span class="chip">&lt;i&gt; курсив</span>
+        <span class="chip">&lt;u&gt; подчёрк.</span>
+        <span class="chip">&lt;strike&gt; перечерк.</span>
+        <span class="chip">&lt;big&gt; большой</span>
+        <span class="chip">&lt;small&gt; мелкий</span>
+        <span class="chip">&lt;sub&gt; подстрочный</span>
+        <span class="chip">&lt;sup&gt; надстрочный</span>
+      </div>
+      <pre><span class="kw">&lt;b&gt;&lt;i&gt;&lt;u&gt;</span>жирный курсив подчёркнутый<span class="kw">&lt;/u&gt;&lt;/i&gt;&lt;/b&gt;</span>
+<span class="cm">&lt;!-- Закрывай в обратном порядке! --&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Абзацы, переносы, комментарии</div>
+      <pre><span class="kw">&lt;br&gt;</span>                     <span class="cm">&lt;!-- перенос строки (без закрывающего тега) --&gt;</span>
+<span class="kw">&lt;p</span> <span class="at">align</span>=<span class="val">"center"</span><span class="kw">&gt;</span>Абзац по центру<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;marquee&gt;</span>Бегущая строка — длинный текст<span class="kw">&lt;/marquee&gt;</span>
+<span class="cm">&lt;!-- Это комментарий — браузер не покажет --&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Мини-песочница</div>
+      <div class="sandbox-grid">
+        <div>
+          <div class="sandbox-label">Код</div>
+          <textarea id="t-text">&lt;h2&gt;Привет!&lt;/h2&gt;
+&lt;font color="#7c6fff" size="4"&gt;&lt;b&gt;Жирный цветной&lt;/b&gt;&lt;/font&gt;
+&lt;br&gt;
+&lt;i&gt;Курсив&lt;/i&gt; и &lt;u&gt;подчёркнутый&lt;/u&gt;
+&lt;br&gt;
+&lt;font size="2" color="gray"&gt;Маленький серый&lt;/font&gt;</textarea>
+        </div>
+        <div>
+          <div class="sandbox-label">Результат</div>
+          <div class="preview-pane" id="p-text"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="run('t-text','p-text')">▶ Показать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ КАРТИНКИ ░░ -->
+  <div class="section" id="s-img">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Тег &lt;img&gt; — вставка изображения</div>
+      <pre><span class="kw">&lt;img</span> <span class="at">src</span>=<span class="val">"foto.jpg"</span><span class="kw">&gt;</span>                          <span class="cm">&lt;!-- минимум --&gt;</span>
+<span class="kw">&lt;img</span> <span class="at">src</span>=<span class="val">"foto.jpg"</span> <span class="at">width</span>=<span class="val">"200"</span> <span class="at">height</span>=<span class="val">"150"</span><span class="kw">&gt;</span>
+<span class="kw">&lt;img</span> <span class="at">src</span>=<span class="val">"foto.jpg"</span> <span class="at">align</span>=<span class="val">"left"</span> <span class="at">hspace</span>=<span class="val">"10"</span> <span class="at">vspace</span>=<span class="val">"5"</span><span class="kw">&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Все атрибуты &lt;img&gt;</div>
+      <table class="ref-table">
+        <tr><th>Атрибут</th><th>Что делает</th></tr>
+        <tr><td>src="файл"</td><td>Путь к картинке — ОБЯЗАТЕЛЬНЫЙ!</td></tr>
+        <tr><td>width="200"</td><td>Ширина в пикселях</td></tr>
+        <tr><td>height="150"</td><td>Высота в пикселях</td></tr>
+        <tr><td>align="left"</td><td>Слева — текст обтекает справа</td></tr>
+        <tr><td>align="right"</td><td>Справа — текст обтекает слева</td></tr>
+        <tr><td>border="2"</td><td>Рамка толщиной 2 пикселя</td></tr>
+        <tr><td>alt="описание"</td><td>Текст пока грузится</td></tr>
+        <tr><td>hspace="10"</td><td>Отступ слева и справа</td></tr>
+        <tr><td>vspace="10"</td><td>Отступ сверху и снизу</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot p"></span> Где хранить картинки</div>
+      <ul class="steps">
+        <li><span class="num">1</span><span>Та же папка что .html → просто имя: <code>src="foto.jpg"</code></span></li>
+        <li><span class="num">2</span><span>Вложенная папка → <code>src="images/foto.jpg"</code></span></li>
+        <li><span class="num">3</span><span>Другой сайт → <code>src="http://site.com/foto.jpg"</code></span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ░░ ССЫЛКИ ░░ -->
+  <div class="section" id="s-links">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Ссылки на другие страницы</div>
+      <pre><span class="cm">&lt;!-- Файлы в одной папке --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page2.html"</span><span class="kw">&gt;</span>Перейти на страницу 2<span class="kw">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Внешний сайт --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"http://www.google.com"</span><span class="kw">&gt;</span>Google<span class="kw">&lt;/a&gt;</span></pre>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">Текст между <code style="color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:12px">&lt;a&gt;</code> и <code style="color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:12px">&lt;/a&gt;</code> — это кликабельный текст</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Якоря — переход внутри документа</div>
+      <pre><span class="cm">&lt;!-- Шаг 1: поставить метку --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">name</span>=<span class="val">"top"</span><span class="kw">&gt;</span>Начало страницы<span class="kw">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Шаг 2: ссылка на метку (# + имя) --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"#top"</span><span class="kw">&gt;</span>Вернуться наверх<span class="kw">&lt;/a&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot p"></span> Навигация между 3 страницами (ЛР)</div>
+      <pre><span class="cm">&lt;!-- page1.html --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page2.html"</span><span class="kw">&gt;</span>Продукция<span class="kw">&lt;/a&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page3.html"</span><span class="kw">&gt;</span>Таблица<span class="kw">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- page2.html --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page1.html"</span><span class="kw">&gt;</span>Главная<span class="kw">&lt;/a&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page3.html"</span><span class="kw">&gt;</span>Таблица<span class="kw">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- page3.html --&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page1.html"</span><span class="kw">&gt;</span>Главная<span class="kw">&lt;/a&gt;</span>
+<span class="kw">&lt;a</span> <span class="at">href</span>=<span class="val">"page2.html"</span><span class="kw">&gt;</span>Продукция<span class="kw">&lt;/a&gt;</span></pre>
+    </div>
+  </div>
+
+  <!-- ░░ СПИСКИ ░░ -->
+  <div class="section" id="s-lists">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Маркированный список &lt;ul&gt;</div>
+      <pre><span class="kw">&lt;ul&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Стол<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Стул<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Шкаф<span class="kw">&lt;/li&gt;</span>
+<span class="kw">&lt;/ul&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Нумерованный список &lt;ol&gt;</div>
+      <pre><span class="kw">&lt;ol&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Первый пункт<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Второй пункт<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Третий пункт<span class="kw">&lt;/li&gt;</span>
+<span class="kw">&lt;/ol&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot p"></span> Мини-песочница</div>
+      <div class="sandbox-grid">
+        <div>
+          <div class="sandbox-label">Код</div>
+          <textarea id="t-list">&lt;b&gt;Продукция:&lt;/b&gt;
+&lt;ul&gt;
+  &lt;li&gt;Стол&lt;/li&gt;
+  &lt;li&gt;Стул&lt;/li&gt;
+  &lt;li&gt;Шкаф&lt;/li&gt;
+&lt;/ul&gt;</textarea>
+        </div>
+        <div>
+          <div class="sandbox-label">Результат</div>
+          <div class="preview-pane" id="p-list"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="run('t-list','p-list')">▶ Показать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ ТАБЛИЦЫ ░░ -->
+  <div class="section" id="s-tables">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Структура таблицы</div>
+      <pre><span class="kw">&lt;table</span> <span class="at">border</span>=<span class="val">"1"</span> <span class="at">cellpadding</span>=<span class="val">"5"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;tr&gt;</span>
+    <span class="kw">&lt;th&gt;</span>Наименование<span class="kw">&lt;/th&gt;</span>  <span class="kw">&lt;th&gt;</span>Стоимость<span class="kw">&lt;/th&gt;</span>  <span class="kw">&lt;th&gt;</span>Кол-во<span class="kw">&lt;/th&gt;</span>
+  <span class="kw">&lt;/tr&gt;</span>
+  <span class="kw">&lt;tr&gt;</span>
+    <span class="kw">&lt;td&gt;</span>Стол<span class="kw">&lt;/td&gt;</span>  <span class="kw">&lt;td&gt;</span>5000<span class="kw">&lt;/td&gt;</span>  <span class="kw">&lt;td&gt;</span>10<span class="kw">&lt;/td&gt;</span>
+  <span class="kw">&lt;/tr&gt;</span>
+  <span class="kw">&lt;tr&gt;</span>
+    <span class="kw">&lt;td&gt;</span>Стул<span class="kw">&lt;/td&gt;</span>  <span class="kw">&lt;td&gt;</span>1500<span class="kw">&lt;/td&gt;</span>  <span class="kw">&lt;td&gt;</span>50<span class="kw">&lt;/td&gt;</span>
+  <span class="kw">&lt;/tr&gt;</span>
+<span class="kw">&lt;/table&gt;</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Теги и атрибуты</div>
+      <table class="ref-table">
+        <tr><th>Тег / Атрибут</th><th>Что делает</th></tr>
+        <tr><td>&lt;table&gt;</td><td>Вся таблица</td></tr>
+        <tr><td>&lt;tr&gt;</td><td>Строка (table row)</td></tr>
+        <tr><td>&lt;th&gt;</td><td>Ячейка-заголовок (жирная, по центру)</td></tr>
+        <tr><td>&lt;td&gt;</td><td>Обычная ячейка с данными</td></tr>
+        <tr><td>border="1"</td><td>Толщина рамки</td></tr>
+        <tr><td>width="500"</td><td>Ширина таблицы</td></tr>
+        <tr><td>cellpadding="5"</td><td>Отступ текста внутри ячейки</td></tr>
+        <tr><td>cellspacing="2"</td><td>Расстояние между ячейками</td></tr>
+        <tr><td>bgcolor="цвет"</td><td>Фон таблицы или ячейки</td></tr>
+        <tr><td>align="center"</td><td>Выравнивание таблицы на странице</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot p"></span> Мини-песочница</div>
+      <div class="sandbox-grid">
+        <div>
+          <div class="sandbox-label">Код</div>
+          <textarea id="t-table">&lt;table border="1" cellpadding="6"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Товар&lt;/th&gt;
+    &lt;th&gt;Цена&lt;/th&gt;
+    &lt;th&gt;Кол-во&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Стол&lt;/td&gt;
+    &lt;td&gt;5000&lt;/td&gt;
+    &lt;td&gt;10&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Стул&lt;/td&gt;
+    &lt;td&gt;1500&lt;/td&gt;
+    &lt;td&gt;50&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</textarea>
+        </div>
+        <div>
+          <div class="sandbox-label">Результат</div>
+          <div class="preview-pane" id="p-table"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="run('t-table','p-table')">▶ Показать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ ЦВЕТА ░░ -->
+  <div class="section" id="s-colors">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Два способа задать цвет</div>
+      <pre><span class="cm">&lt;!-- Словом --&gt;</span>
+<span class="at">bgcolor</span>=<span class="val">"white"</span>   <span class="at">bgcolor</span>=<span class="val">"cyan"</span>   <span class="at">bgcolor</span>=<span class="val">"yellow"</span>
+
+<span class="cm">&lt;!-- Кодом RGB (#RRGGBB) --&gt;</span>
+<span class="at">bgcolor</span>=<span class="val">"#FFFFFF"</span>   <span class="cm">← белый</span>
+<span class="at">bgcolor</span>=<span class="val">"#FF0000"</span>   <span class="cm">← красный</span>
+<span class="at">bgcolor</span>=<span class="val">"#0000FF"</span>   <span class="cm">← синий</span>
+<span class="at">bgcolor</span>=<span class="val">"#FFFACD"</span>   <span class="cm">← светло-жёлтый (для фона)</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot g"></span> Палитра — нажми чтобы скопировать код</div>
+      <div class="color-grid" id="color-grid"></div>
+      <span class="copied-msg" id="copied-msg">скопировано!</span>
+    </div>
+  </div>
+
+  <!-- ░░ ПЕСОЧНИЦА ░░ -->
+  <div class="section" id="s-sandbox">
+
+    <!-- Сниппеты -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title"><span class="dot p"></span> Быстрые примеры — нажми чтобы вставить</div>
+      <div id="snippet-btns" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:4px"></div>
+    </div>
+
+    <!-- Редактор + превью -->
+    <div class="card" style="padding:0;overflow:hidden">
+
+      <!-- Тулбар редактора -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface2);gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Редактор</span>
+          <span id="line-counter" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">стр. 1</span>
+          <span id="error-badge" style="display:none;font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(255,111,145,0.15);color:#ff6f91;border:1px solid rgba(255,111,145,0.3);font-family:'JetBrains Mono',monospace"></span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="wrapTag('b')"><b>B</b></button>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="wrapTag('i')"><i>I</i></button>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="wrapTag('u')"><u>U</u></button>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="insertTag('br')">↵ br</button>
+          <div style="width:1px;height:20px;background:var(--border)"></div>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="undoCode()" id="undo-btn" title="Отменить (вернуть предыдущий код)" disabled>↶ Отмен</button>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="clearSandbox()" title="Очистить">✕</button>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="copySandbox()" title="Скопировать">⎘</button>
+        </div>
+      </div>
+
+      <!-- Редактор + iframe рядом -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;min-height:320px">
+        <div style="border-right:1px solid var(--border);position:relative">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 16px 4px;background:var(--surface2);flex-shrink:0">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6f91;margin-right:4px"></span>Код
+            <span id="ai-from-indicator" style="margin-left:8px;font-size:9px;color:#ff6f91;opacity:0;transition:opacity .3s;font-family:'JetBrains Mono',monospace">🤖 от ИИ</span>
+          </div>
+          <textarea id="t-sandbox" spellcheck="false" style="width:100%;height:calc(100% - 30px);min-height:290px;border:none;border-radius:0;resize:none;padding:14px 16px;font-size:12.5px;line-height:1.75;background:var(--code-bg);color:#c8c8e8"></textarea>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 16px 4px;background:var(--surface2);flex-shrink:0">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6fffd4;margin-right:4px"></span>Результат
+            <span id="autorun-badge" style="margin-left:8px;font-size:10px;color:var(--accent);opacity:.7">● авто</span>
+          </div>
+          <iframe id="sandbox-frame" style="flex:1;border:none;background:#fff;min-height:290px;width:100%"></iframe>
+        </div>
+      </div>
+
+      <!-- Нижний тулбар -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;gap:8px">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="padding:7px 20px" onclick="runSandbox()">▶ Запустить</button>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none">
+            <input type="checkbox" id="autorun-cb" checked onchange="toggleAutorun()" style="accent-color:var(--accent);width:14px;height:14px">
+            Авто-запуск
+          </label>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)" id="char-counter">0 симв.</div>
+      </div>
+    </div>
+
+    <!-- Ошибки -->
+    <div id="error-panel" style="display:none;margin-top:10px;background:rgba(255,111,145,0.06);border:1px solid rgba(255,111,145,0.25);border-radius:var(--radius);padding:12px 16px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ff6f91;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">⚠ Проверь код</div>
+      <ul id="error-list" style="list-style:none;font-size:13px;color:#ff9fb2;line-height:1.8"></ul>
+    </div>
+
+    <!-- Чеклист ЛР -->
+    <div class="card" style="margin-top:14px">
+      <div class="card-title"><span class="dot g"></span> Чеклист ЛР №15</div>
+      <ul class="steps" id="checklist"></ul>
+    </div>
+
+  </div>
+
+  <!-- ░░ ИИ-ПОМОЩНИК ░░ -->
+  <div class="section" id="s-ai">
+    <div class="ai-wrap">
+
+      <!-- Шапка -->
+      <div class="ai-header">
+        <div class="ai-avatar">🤖</div>
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">ИИ-помощник по HTML</div>
+          <div class="ai-status-row">
+            <span class="ai-status-dot" id="ai-status-dot"></span>
+            <span style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace" id="ai-status">онлайн · Claude via OpenRouter</span>
+          </div>
+        </div>
+        <div class="ai-header-actions">
+          <span class="chat-saved-badge" id="ai-chat-saved">💾 сохранён</span>
+          <button class="ai-icon-btn" onclick="aiInsertCode()" id="ai-insert-btn" title="Вставить последний код в песочницу" disabled>⬆ Вставить</button>
+          <button class="ai-icon-btn" onclick="exportSandboxHTML()" title="Скачать HTML">📄 HTML</button>
+          <button class="ai-icon-btn" onclick="exportChatJSON()" title="Экспорт чата">📥 JSON</button>
+          <button class="ai-icon-btn" onclick="openHistoryModal()" title="История версий">🕐 История</button>
+          <button class="ai-icon-btn danger" onclick="clearAiChat()" title="Очистить чат">✕</button>
+        </div>
+      </div>
+
+      <!-- Лента сообщений -->
+      <div id="ai-messages" class="ai-feed">
+        <div class="ai-msg ai-msg--bot">
+          <div class="ai-msg-avatar">🤖</div>
+          <div class="ai-bubble"><b>👋 Привет! Я твой ИИ-помощник по HTML</b>
+
+<b>Вот что я умею:</b>
+• 🧠 Объяснять теги, атрибуты и принципы HTML
+• 💻 Писать и редактировать код прямо в <b>песочнице</b>
+• 🔍 Проверять твой код на ошибки и давать советы
+• ✏️ Добавлять новые элементы по запросу
+• 📝 Переделывать код по твоим требованиям
+
+<b>Как пользоваться:</b>
+1️⃣ Напиши запрос в поле ниже (или нажми кнопки)
+2️⃣ Если нужна помощь с <b>твоим кодом</b> — нажми <b>📋 Прикрепить код</b>
+3️⃣ Результат с кодом появится <b>автоматически</b> в песочнице!</div>
+        </div>
+      </div>
+
+      <!-- Быстрые подсказки -->
+      <div class="ai-hints" id="ai-hints">
+        <button class="ai-hint-btn" onclick="aiQuick('Напиши мне красивую страницу &quot;О компании&quot; с логотипом, описанием и контактами')">🏢 О компании</button>
+        <button class="ai-hint-btn" onclick="aiQuick('Проверь код на ошибки и дай советы как улучшить')">🔍 Проверить код</button>
+        <button class="ai-hint-btn" onclick="aiAnalyzeErrors()">⚠️ Анализ ошибок</button>
+        <button class="ai-hint-btn" onclick="aiQuick('Добавь красивое оформление: цветной фон, размеры шрифтов, выравнивание')">🎨 Оформление</button>
+        <button class="ai-hint-btn" onclick="aiQuick('Объясни как работают теги &lt;table&gt;, &lt;tr&gt;, &lt;td&gt;, &lt;th&gt;')">📚 Объяснить теги</button>
+        <button class="ai-hint-btn" onclick="aiQuick('Напиши полный HTML шаблон для интернет-магазина мебели')">🛒 Магазин</button>
+      </div>
+
+      <!-- Поле ввода -->
+      <div class="ai-input-area">
+        <div class="ai-input-box">
+          <textarea id="ai-input"
+            placeholder="Спроси что-нибудь или попроси изменить код…"
+            onkeydown="aiInputKeydown(event)"
+            oninput="this.style.height='36px';this.style.height=Math.min(this.scrollHeight,110)+'px'"></textarea>
+          <div class="ai-input-actions">
+            <button class="ai-send-code-btn" onclick="aiSendWithCode()" title="Прикрепить код из песочницы">📋 Прикрепить код</button>
+            <button class="ai-send-btn" id="ai-send-btn" onclick="aiSend()">Отправить ↑</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ░░ МОДАЛЬНОЕ ОКНО ИСТОРИИ ░░ -->
+<div class="history-modal" id="history-modal" onclick="if(event.target===this)closeHistoryModal()">
+  <div class="history-box">
+    <div class="history-header">
+      <div style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px">
+        <span>🕐</span> История версий кода
+        <span id="history-count" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);font-weight:400"></span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost" style="padding:4px 12px;font-size:11px" onclick="clearHistory()">🗑 Очистить</button>
+        <button class="btn btn-ghost" style="padding:4px 12px;font-size:11px" onclick="closeHistoryModal()">✕</button>
+      </div>
+    </div>
+    <div class="history-list" id="history-list">
+      <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">История пуста — применяй код из ИИ, чтобы версии сохранялись</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #t-sandbox { outline: none; tab-size: 2; }
+  #t-sandbox:focus { box-shadow: inset 2px 0 0 var(--accent); }
+  .snip-btn {
+    padding: 5px 13px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--accent3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .snip-btn:hover { border-color: var(--accent3); background: rgba(111,255,212,0.07); }
+  .step-check { display: flex; gap: 14px; margin-bottom: 10px; align-items: flex-start; }
+  .step-check input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; margin-top: 3px; flex-shrink: 0; cursor: pointer; }
+  .step-check label { font-size: 13px; color: var(--muted); cursor: pointer; line-height: 1.6; }
+  .step-check label code { color: var(--accent3); font-family: 'JetBrains Mono',monospace; font-size: 11px; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  .step-check.done label { color: #555570; text-decoration: line-through; }
+</style>
+
+<script>
+const tabs = ['structure','text','img','links','lists','tables','colors','sandbox','ai'];
+const progress = [12, 25, 37, 50, 62, 75, 87, 100, 100];
+
+function show(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('s-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  const idx = tabs.indexOf(name);
+  document.getElementById('progress').style.width = progress[idx] + '%';
+}
+
+function run(inputId, previewId) {
+  const code = document.getElementById(inputId).value;
+  document.getElementById(previewId).innerHTML = code;
+}
+
+// ── Улучшенная песочница ──────────────────────────────────
+
+const SNIPPETS = [
+  { label: 'Скелет', code: `<html>\n<head>\n  <title>Моя страница</title>\n</head>\n<body bgcolor="lightyellow">\n\n  <h1 align="center">Заголовок</h1>\n\n</body>\n</html>` },
+  { label: 'Заголовок H1', code: `<h1 align="center">Название предприятия</h1>` },
+  { label: 'Цвет текста', code: `<font color="#0000AA" size="4"><b>Синий жирный текст</b></font>` },
+  { label: 'Картинка', code: `<img src="photo.jpg" width="200" height="150" align="left" hspace="10" alt="Фото">` },
+  { label: 'Абзац', code: `<p align="left">Первый абзац — структура предприятия.</p>\n<p align="left">Второй абзац — выпускаемая продукция.</p>` },
+  { label: 'Список', code: `<ul>\n  <li>Стол</li>\n  <li>Стул</li>\n  <li>Шкаф</li>\n</ul>` },
+  { label: 'Таблица', code: `<table border="1" cellpadding="5">\n  <tr><th>Наименование</th><th>Стоимость</th><th>Количество</th></tr>\n  <tr><td>Стол</td><td>5000</td><td>10</td></tr>\n  <tr><td>Стул</td><td>1500</td><td>50</td></tr>\n  <tr><td>Шкаф</td><td>8000</td><td>5</td></tr>\n</table>` },
+  { label: 'Ссылка', code: `<a href="page2.html">Перейти на страницу 2</a>` },
+  { label: 'Бегущая строка', code: `<marquee>Покупайте нашу продукцию! Отличное качество и доступные цены! Звоните прямо сейчас!</marquee>` },
+  { label: 'Страница 1 (ЛР)', code: `<html>\n<head><title>Первая страница</title></head>\n<body bgcolor="#FFFACD" text="#222222">\n\n<h1 align="center"><font color="#003399">Мебель Люкс</font></h1>\n<p align="center">г. Москва, ул. Примерная, д. 1 | тел: +7 (495) 000-00-00</p>\n\n<img src="firma.jpg" width="220" height="160" align="left" hspace="15" vspace="5" alt="Предприятие">\n\n<p><b>Структура предприятия:</b> <font color="navy">директор</font>, главный бухгалтер,\n  <font face="Arial"><u>отдел продаж</u></font>, производственный цех.</p>\n\n<p><b>Выпускаемая продукция:</b> <font color="darkgreen" size="4">столы</font>,\n  <font color="darkred" size="3">стулья</font>, <b>шкафы</b> и корпусная мебель.</p>\n\n<br clear="all">\n<marquee>Покупайте нашу продукцию! Скидки до 30%! Доставка по всей России! Звоните: +7-495-000-00-00</marquee>\n\n<br><br>\n<a href="page2.html">Продукция</a> |\n<a href="page3.html">Прайс-лист</a>\n\n</body>\n</html>` },
+];
+
+const snippetContainer = document.getElementById('snippet-btns');
+SNIPPETS.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'snip-btn';
+  btn.textContent = s.label;
+  btn.onclick = () => {
+    document.getElementById('t-sandbox').value = s.code;
+    runSandbox();
+    updateStats();
+  };
+  snippetContainer.appendChild(btn);
+});
+
+// Авто-запуск
+let autorunEnabled = true;
+let autorunTimer = null;
+
+function toggleAutorun() {
+  autorunEnabled = document.getElementById('autorun-cb').checked;
+  document.getElementById('autorun-badge').style.opacity = autorunEnabled ? '.7' : '.2';
+}
+
+function runSandbox() {
+  const code = document.getElementById('t-sandbox').value;
+  const frame = document.getElementById('sandbox-frame');
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open();
+  doc.write(code);
+  doc.close();
+  checkErrors(code);
+}
+
+// Подсчёт ошибок
+function checkErrors(code) {
+  const errors = [];
+  const selfClosing = ['br','img','input','hr','meta','link'];
+  const openTags = [];
+  const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9]*)[^>]*>/g;
+  let m;
+  while((m = tagRe.exec(code)) !== null) {
+    const full = m[0], name = m[1].toLowerCase();
+    if(selfClosing.includes(name)) continue;
+    if(full.startsWith('</')) {
+      if(openTags.length && openTags[openTags.length-1] === name) openTags.pop();
+    } else if(!full.endsWith('/>')) {
+      openTags.push(name);
+    }
+  }
+  if(openTags.length) errors.push('Незакрытые теги: ' + openTags.map(t=>`<${t}>`).join(', '));
+  if(!code.includes('<html') && code.trim().length > 30) errors.push('Нет тега &lt;html&gt; — добавь скелет страницы');
+  if(code.includes('<html') && !code.includes('<title')) errors.push('Нет тега &lt;title&gt; в &lt;head&gt;');
+
+  const badge = document.getElementById('error-badge');
+  const panel = document.getElementById('error-panel');
+  const list  = document.getElementById('error-list');
+  if(errors.length) {
+    badge.textContent = '⚠ ' + errors.length + ' замечани' + (errors.length===1?'е':'я');
+    badge.style.display = 'inline';
+    list.innerHTML = errors.map(e=>`<li>→ ${e}</li>`).join('');
+    panel.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+    panel.style.display = 'none';
+  }
+}
+
+// Статистика
+function updateStats() {
+  const ta = document.getElementById('t-sandbox');
+  const val = ta.value;
+  const lines = val.split('\n').length;
+  const chars = val.length;
+  document.getElementById('line-counter').textContent = 'строк: ' + lines;
+  document.getElementById('char-counter').textContent = chars + ' симв.';
+}
+
+document.getElementById('t-sandbox').addEventListener('input', () => {
+  updateStats();
+  if(autorunEnabled) {
+    clearTimeout(autorunTimer);
+    autorunTimer = setTimeout(runSandbox, 600);
+  }
+});
+
+// Tab в textarea
+document.getElementById('t-sandbox').addEventListener('keydown', e => {
+  if(e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const s = ta.selectionStart, end = ta.selectionEnd;
+    ta.value = ta.value.slice(0,s) + '  ' + ta.value.slice(end);
+    ta.selectionStart = ta.selectionEnd = s + 2;
+    if(autorunEnabled) { clearTimeout(autorunTimer); autorunTimer = setTimeout(runSandbox, 600); }
+  }
+});
+
+function wrapTag(tag) {
+  const ta = document.getElementById('t-sandbox');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const selected = ta.value.slice(s, e) || 'текст';
+  const wrapped = `<${tag}>${selected}</${tag}>`;
+  ta.value = ta.value.slice(0,s) + wrapped + ta.value.slice(e);
+  ta.selectionStart = s + tag.length + 2;
+  ta.selectionEnd   = s + tag.length + 2 + selected.length;
+  ta.focus();
+  if(autorunEnabled) runSandbox();
+  updateStats();
+}
+
+function insertTag(tag) {
+  const ta = document.getElementById('t-sandbox');
+  const s = ta.selectionStart;
+  ta.value = ta.value.slice(0,s) + `<${tag}>` + ta.value.slice(s);
+  ta.selectionStart = ta.selectionEnd = s + tag.length + 2;
+  ta.focus();
+  if(autorunEnabled) runSandbox();
+  updateStats();
+}
+
+function clearSandbox() {
+  document.getElementById('t-sandbox').value = '';
+  const frame = document.getElementById('sandbox-frame');
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(''); doc.close();
+  document.getElementById('error-badge').style.display='none';
+  document.getElementById('error-panel').style.display='none';
+  updateStats();
+}
+
+function copySandbox() {
+  navigator.clipboard.writeText(document.getElementById('t-sandbox').value).catch(()=>{});
+  const btn = event.target;
+  btn.textContent = '✓';
+  setTimeout(() => btn.textContent = '⎘', 1200);
+}
+
+function undoCode() {
+  if (codeHistory.length === 0) return;
+  const entry = codeHistory.pop();
+  document.getElementById('t-sandbox').value = entry.code;
+  runSandbox();
+  updateStats();
+  const undoBtn = document.getElementById('undo-btn');
+  undoBtn.disabled = codeHistory.length === 0;
+}
+
+// Чеклист ЛР
+const checklistItems = [
+  { text: 'Написать скелет: <code>&lt;html&gt;&lt;head&gt;&lt;title&gt;…&lt;/title&gt;&lt;/head&gt;&lt;body&gt;…&lt;/body&gt;&lt;/html&gt;</code>' },
+  { text: 'Задать светлый <code>bgcolor</code> в теге <code>&lt;body&gt;</code>' },
+  { text: 'Добавить заголовок <code>&lt;h1&gt;</code> с названием предприятия + задать цвет' },
+  { text: 'Добавить адрес предприятия под заголовком' },
+  { text: 'Вставить картинку слева: <code>&lt;img src="…" align="left" width="…" height="…"&gt;</code>' },
+  { text: 'Написать два абзаца справа (структура и продукция)' },
+  { text: 'Выделить слова: цветом, гарнитурой, жирным, размером' },
+  { text: 'Добавить бегущую строку: <code>&lt;marquee&gt;…&lt;/marquee&gt;</code>' },
+  { text: 'Создать <code>page2.html</code> — заголовок + список продукции' },
+  { text: 'Создать <code>page3.html</code> — таблица с продукцией' },
+  { text: 'Добавить гиперссылки между всеми тремя страницами' },
+];
+const cl = document.getElementById('checklist');
+checklistItems.forEach((item, i) => {
+  const li = document.createElement('li');
+  li.className = 'step-check';
+  li.innerHTML = `<input type="checkbox" id="ck${i}" onchange="this.closest('li').classList.toggle('done',this.checked)"><label for="ck${i}">${item.text}</label>`;
+  cl.appendChild(li);
+});
+
+// ── Общие ──────────────────────────────────────────────────
+
+function run(inputId, previewId) {
+  const code = document.getElementById(inputId).value;
+  document.getElementById(previewId).innerHTML = code;
+}
+
+// Color palette
+const colors = [
+  {name:'White',    hex:'#FFFFFF'}, {name:'Black',    hex:'#000000'},
+  {name:'Red',      hex:'#FF0000'}, {name:'Blue',     hex:'#0000FF'},
+  {name:'Green',    hex:'#008000'}, {name:'Yellow',   hex:'#FFFF00'},
+  {name:'Aqua',     hex:'#00FFFF'}, {name:'Orange',   hex:'#FFA500'},
+  {name:'Purple',   hex:'#800080'}, {name:'Pink',     hex:'#FFB6C1'},
+  {name:'LightYellow', hex:'#FFFACD'}, {name:'LightGreen', hex:'#90EE90'},
+  {name:'LightBlue',hex:'#ADD8E6'}, {name:'Silver',   hex:'#C0C0C0'},
+  {name:'Teal',     hex:'#008080'}, {name:'Maroon',   hex:'#800000'},
+];
+const grid = document.getElementById('color-grid');
+colors.forEach(c => {
+  const sw = document.createElement('div');
+  sw.className = 'swatch';
+  sw.innerHTML = `<div class="swatch-color" style="background:${c.hex}"></div><div class="swatch-info"><div class="swatch-name">${c.name}</div><div class="swatch-hex">${c.hex}</div></div>`;
+  sw.onclick = () => {
+    navigator.clipboard.writeText(c.hex).catch(()=>{});
+    const msg = document.getElementById('copied-msg');
+    msg.textContent = 'скопировано: ' + c.hex;
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 1800);
+  };
+  grid.appendChild(sw);
+});
+
+// ── ИИ-ПОМОЩНИК ──────────────────────────────────────────────
+
+const OPENROUTER_KEY = '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';
+const AI_MODEL = 'anthropic/claude-3.5-haiku';
+
+let aiHistory = [];
+let aiLastCode = null;
+let codeHistory = []; // {code, time, label}
+
+const AI_SYSTEM = `Ты — дружелюбный ИИ-помощник по HTML для студентов. 
+Ты отвечаешь ТОЛЬКО на русском языке.
+Ты помогаешь писать, редактировать, исправлять и объяснять HTML-код.
+Когда пользователь просит изменить или улучшить код — возвращай ПОЛНЫЙ исправленный HTML-код в блоке \`\`\`html ... \`\`\`.
+Объяснения пиши кратко и понятно. Не используй сложные термины без объяснений.
+Если в вопросе есть код — проанализируй его и дай конкретный совет.
+Всегда будь доброжелательным и поддерживающим.`;
+
+function aiGetSandboxCode() {
+  return document.getElementById('t-sandbox').value.trim();
+}
+
+// ── 4. Встроенный превью в чате ─────────────────────────────
+function aiTogglePreview(btn, frameId, codeId) {
+  const frame = document.getElementById(frameId);
+  const code  = document.getElementById(codeId).value;
+  if (frame.classList.contains('open')) {
+    frame.classList.remove('open');
+    btn.textContent = '👁 Показать превью';
+  } else {
+    const doc = frame.contentDocument || frame.contentWindow.document;
+    doc.open(); doc.write(code); doc.close();
+    frame.classList.add('open');
+    btn.textContent = '✕ Скрыть превью';
+  }
+}
+
+function aiRenderBubble(text, role) {
+  const rawHtml = text.replace(/```(?:html)?\n?([\s\S]*?)```/g, (_, code) => {
+    const id        = 'aicode_'    + Math.random().toString(36).slice(2);
+    const frameId   = 'aiframe_'   + Math.random().toString(36).slice(2);
+    const escaped   = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    aiLastCode = code.trim();
+    document.getElementById('ai-insert-btn').disabled = false;
+
+    // Авто-вставка в песочницу
+    setTimeout(() => {
+      document.getElementById('t-sandbox').value = code.trim();
+      runSandbox();
+      updateStats();
+    }, 100);
+
+    return `<div class="ai-code-block">
+      <div class="ai-code-header">
+        <span class="ai-code-lang">HTML</span>
+        <div class="ai-code-actions">
+          <button class="ai-copy-btn" onclick="aiCopyCode(this,'${id}')">⎘ копировать</button>
+          <button class="ai-copy-btn apply" onclick="aiApplyCode('${id}')">✓ Применить</button>
+          <button class="ai-preview-toggle" onclick="aiTogglePreview(this,'${frameId}','${id}')">👁 Превью</button>
+        </div>
+      </div>
+      <pre>${escaped}</pre>
+      <textarea id="${id}" style="display:none">${code}</textarea>
+      <iframe id="${frameId}" class="ai-preview-frame"></iframe>
+    </div>`;
+  });
+
+  return rawHtml.replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function aiAddMessage(role, text) {
+  const msgs = document.getElementById('ai-messages');
+  const div = document.createElement('div');
+  div.className = `ai-msg ai-msg--${role === 'user' ? 'user' : 'bot'}`;
+
+  // Аватар
+  const avatar = document.createElement('div');
+  avatar.className = 'ai-msg-avatar';
+  avatar.textContent = role === 'user' ? '👤' : '🤖';
+  div.appendChild(avatar);
+
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-bubble';
+
+  const hasCode = text.includes('```');
+  let content = aiRenderBubble(text, role);
+
+  if (hasCode && role === 'assistant') {
+    content = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding:7px 10px;background:rgba(111,255,212,0.08);border-radius:8px;border:1px solid rgba(111,255,212,0.18)">
+      <span style="font-size:12px">✨</span>
+      <span style="font-size:11px;color:var(--accent3);font-family:'JetBrains Mono',monospace">Код загружен в песочницу</span>
+    </div>` + content;
+  }
+
+  bubble.innerHTML = content;
+  div.appendChild(bubble);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function aiShowTyping() {
+  const msgs = document.getElementById('ai-messages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg ai-msg--bot';
+  div.id = 'ai-typing-indicator';
+  const avatar = document.createElement('div');
+  avatar.className = 'ai-msg-avatar';
+  avatar.textContent = '🤖';
+  div.appendChild(avatar);
+  const typing = document.createElement('div');
+  typing.className = 'ai-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  div.appendChild(typing);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function aiHideTyping() {
+  const t = document.getElementById('ai-typing-indicator');
+  if (t) t.remove();
+}
+
+function aiCopyCode(btn, id) {
+  const code = document.getElementById(id).value;
+  navigator.clipboard.writeText(code).catch(()=>{});
+  btn.textContent = '✓ скопировано';
+  setTimeout(() => btn.textContent = '⎘ копировать', 1500);
+}
+
+function aiApplyCode(id) {
+  const code = document.getElementById(id).value;
+  const currentCode = document.getElementById('t-sandbox').value.trim();
+  if (currentCode) {
+    pushCodeHistory(currentCode, 'от ИИ');
+  }
+  document.getElementById('t-sandbox').value = code.trim();
+  runSandbox();
+  updateStats();
+  const indicator = document.getElementById('ai-from-indicator');
+  if (indicator) {
+    indicator.style.opacity = '1';
+    setTimeout(() => indicator.style.opacity = '0', 2500);
+  }
+  show('sandbox');
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.textContent.includes('Песочница')) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+}
+
+function aiInsertCode() {
+  if (!aiLastCode) return;
+  document.getElementById('t-sandbox').value = aiLastCode;
+  runSandbox();
+  updateStats();
+  show('sandbox', null);
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.textContent.includes('Песочница')) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+}
+
+// ── 1. Сохранение чата (localStorage) ───────────────────────
+function saveChatToStorage() {
+  try {
+    localStorage.setItem('ai_chat_history', JSON.stringify(aiHistory));
+    const badge = document.getElementById('ai-chat-saved');
+    badge.style.opacity = '1';
+    setTimeout(() => badge.style.opacity = '0', 2000);
+  } catch(e) {}
+}
+
+function loadChatFromStorage() {
+  try {
+    const saved = localStorage.getItem('ai_chat_history');
+    if (!saved) return;
+    const parsed = JSON.parse(saved);
+    if (!parsed || parsed.length === 0) return;
+    aiHistory = parsed;
+    const msgs = document.getElementById('ai-messages');
+    msgs.innerHTML = '';
+    const banner = document.createElement('div');
+    banner.className = 'ai-msg ai-msg--bot';
+    const msgCount = parsed.filter(m => m.role === 'user').length;
+    banner.innerHTML = `<div class="ai-bubble" style="background:rgba(124,111,255,0.1);border-color:rgba(124,111,255,0.3)">
+      💾 <b>Чат восстановлен</b> — ${msgCount} сообщений из прошлой сессии
+    </div>`;
+    msgs.appendChild(banner);
+    parsed.forEach(msg => {
+      if (msg.role === 'user' || msg.role === 'assistant') {
+        aiAddMessage(msg.role, msg.content);
+      }
+    });
+    document.getElementById('ai-chat-saved').style.opacity = '1';
+  } catch(e) {}
+}
+
+function clearAiChat() {
+  aiHistory = [];
+  aiLastCode = null;
+  codeHistory = [];
+  try { localStorage.removeItem('ai_chat_history'); } catch(e) {}
+  document.getElementById('ai-insert-btn').disabled = true;
+  document.getElementById('ai-chat-saved').style.opacity = '0';
+  const undoBtn = document.getElementById('undo-btn');
+  if (undoBtn) undoBtn.disabled = true;
+  const msgs = document.getElementById('ai-messages');
+  msgs.innerHTML = `<div class="ai-msg ai-msg--bot"><div class="ai-bubble">Чат очищен. Чем могу помочь? 😊</div></div>`;
+  renderHistoryList();
+}
+
+// ── 2. История кодов ────────────────────────────────────────
+function pushCodeHistory(code, label) {
+  codeHistory.push({
+    code,
+    label: label || 'версия',
+    time: new Date().toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit', second:'2-digit' })
+  });
+  const undoBtn = document.getElementById('undo-btn');
+  if (undoBtn) undoBtn.disabled = false;
+}
+
+function openHistoryModal() {
+  renderHistoryList();
+  document.getElementById('history-modal').classList.add('open');
+}
+function closeHistoryModal() {
+  document.getElementById('history-modal').classList.remove('open');
+}
+
+function renderHistoryList() {
+  const list = document.getElementById('history-list');
+  const count = document.getElementById('history-count');
+  if (codeHistory.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">История пуста — применяй код из ИИ, чтобы версии сохранялись</div>';
+    count.textContent = '';
+    return;
+  }
+  count.textContent = `(${codeHistory.length})`;
+  list.innerHTML = [...codeHistory].reverse().map((entry, revIdx) => {
+    const idx = codeHistory.length - 1 - revIdx;
+    const preview = entry.code.replace(/</g,'&lt;').replace(/>/g,'&gt;').slice(0, 300);
+    return `<div class="history-item">
+      <div class="history-item-head" onclick="toggleHistoryItem(this)">
+        <span>📄 <b>${entry.label}</b> — <span style="color:var(--text)">${entry.time}</span></span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost" style="padding:3px 10px;font-size:10px" onclick="event.stopPropagation();restoreHistory(${idx})">↩ Восстановить</button>
+          <button class="btn btn-ghost" style="padding:3px 10px;font-size:10px" onclick="event.stopPropagation();compareHistory(${idx})">⇄ Сравнить</button>
+          <span style="color:var(--muted)">${entry.code.length} симв.</span>
+        </div>
+      </div>
+      <div class="history-item-pre" id="hist-pre-${idx}">${preview}${entry.code.length > 300 ? '\n…' : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHistoryItem(head) {
+  const pre = head.nextElementSibling;
+  pre.classList.toggle('open');
+}
+
+function restoreHistory(idx) {
+  const entry = codeHistory[idx];
+  if (!entry) return;
+  const current = document.getElementById('t-sandbox').value.trim();
+  if (current) pushCodeHistory(current, 'до восстановления');
+  document.getElementById('t-sandbox').value = entry.code;
+  runSandbox();
+  updateStats();
+  closeHistoryModal();
+  show('sandbox');
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.textContent.includes('Песочница'));
+  });
+}
+
+function compareHistory(idx) {
+  const entry = codeHistory[idx];
+  const current = document.getElementById('t-sandbox').value;
+  const modal = document.getElementById('history-modal');
+  const list = document.getElementById('history-list');
+  const a = current.split('\n'), b = entry.code.split('\n');
+  const diff = b.map((line, i) => {
+    const orig = a[i] || '';
+    if (line === orig) return `<div style="padding:1px 8px;font-size:11px;color:var(--muted)">${line.replace(/</g,'&lt;')}</div>`;
+    return `<div style="padding:1px 8px;font-size:11px;background:rgba(124,111,255,0.12);color:var(--accent)">${line.replace(/</g,'&lt;')}</div>`;
+  }).join('');
+  list.innerHTML = `<div style="padding:10px">
+    <button class="btn btn-ghost" style="padding:4px 12px;font-size:11px;margin-bottom:10px" onclick="renderHistoryList()">← Назад</button>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:8px">
+      Сравнение: <b style="color:var(--accent)">версия ${idx+1}</b> vs текущий код
+      <span style="margin-left:8px;color:rgba(124,111,255,.6)">— фиолетовый = изменения</span>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:400px;background:var(--code-bg)">${diff}</div>
+  </div>`;
+}
+
+function clearHistory() {
+  codeHistory = [];
+  renderHistoryList();
+}
+
+// ── 3. Анализ ошибок (ИИ видит проблемы) ───────────────────
+function aiAnalyzeErrors() {
+  const code = aiGetSandboxCode();
+  if (!code) {
+    document.getElementById('ai-input').placeholder = 'Сначала напиши что-то в песочнице!';
+    setTimeout(() => document.getElementById('ai-input').placeholder = 'Спроси что-нибудь или попроси изменить код…', 2000);
+    return;
+  }
+  // Собираем список ошибок из панели
+  const errorList = document.getElementById('error-list');
+  const errors = errorList ? [...errorList.querySelectorAll('li')].map(li => li.textContent).join('\n') : '';
+  const errContext = errors
+    ? `\n\nОбнаружены следующие проблемы в коде:\n${errors}\n\nПожалуйста, исправь все эти ошибки и объясни что было не так.`
+    : `\n\nПроанализируй код, найди все ошибки и проблемы, объясни их и верни исправленную версию.`;
+  document.getElementById('ai-input').value = 'Проанализируй мой код и исправь ошибки';
+  aiSend(`Вот мой HTML-код:\n\`\`\`html\n${code}\n\`\`\`${errContext}`);
+}
+
+// ── 5. Экспорт и сохранение ─────────────────────────────────
+function exportChatJSON() {
+  if (aiHistory.length === 0) {
+    alert('Чат пустой — нечего экспортировать');
+    return;
+  }
+  const data = {
+    exportedAt: new Date().toLocaleString('ru-RU'),
+    model: AI_MODEL,
+    messages: aiHistory
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ai-chat-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportSandboxHTML() {
+  const code = document.getElementById('t-sandbox').value;
+  if (!code.trim()) {
+    alert('Песочница пустая — нечего скачивать');
+    return;
+  }
+  const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sandbox-${Date.now()}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── API ──────────────────────────────────────────────────────
+async function aiCallApi(userMessage) {
+  aiHistory.push({ role: 'user', content: userMessage });
+
+  const body = {
+    model: AI_MODEL,
+    messages: [
+      { role: 'system', content: AI_SYSTEM },
+      ...aiHistory
+    ],
+    max_tokens: 2000,
+    temperature: 0.7
+  };
+
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENROUTER_KEY}`,
+      'HTTP-Referer': window.location.href,
+      'X-Title': 'HTML Справочник ИИ-помощник'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) throw new Error(`Ошибка API: ${res.status}`);
+
+  const data = await res.json();
+  const reply = data.choices?.[0]?.message?.content || 'Нет ответа';
+  aiHistory.push({ role: 'assistant', content: reply });
+  saveChatToStorage(); // ← авто-сохранение после каждого ответа
+  return reply;
+}
+
+async function aiSend(extraContext) {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const fullMsg = extraContext ? `${msg}\n\n${extraContext}` : msg;
+  input.value = '';
+  input.style.height = '44px';
+
+  aiAddMessage('user', extraContext ? msg + '\n[📋 прикреплён код из песочницы]' : msg);
+  aiShowTyping();
+
+  const btn = document.getElementById('ai-send-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  const statusDot = document.getElementById('ai-status-dot');
+  const status = document.getElementById('ai-status');
+  status.textContent = 'думаю…';
+  if (statusDot) { statusDot.classList.remove('offline'); }
+
+  try {
+    const reply = await aiCallApi(fullMsg);
+    aiHideTyping();
+    aiAddMessage('assistant', reply);
+    status.textContent = 'онлайн · Claude via OpenRouter';
+  } catch(e) {
+    aiHideTyping();
+    let errorMsg = '❌ <b>Ошибка подключения</b>\n\n';
+    if (e.message.includes('401'))      errorMsg += '🔑 Проблема с ключом API OpenRouter.\nПроверь ключ в коде.';
+    else if (e.message.includes('429')) errorMsg += '⏱️ Слишком много запросов.\nПодожди немного и попробуй снова.';
+    else if (e.message.includes('500')) errorMsg += '🖥️ Проблема на сервере OpenRouter.\nПопробуй позже.';
+    else                                errorMsg += '🌐 Проверь подключение к интернету.\n\n' + e.message;
+    aiAddMessage('assistant', errorMsg);
+    status.textContent = 'ошибка подключения';
+    if (statusDot) statusDot.classList.add('offline');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Отправить ↑';
+}
+
+function aiSendWithCode() {
+  const code = aiGetSandboxCode();
+  if (!code) {
+    document.getElementById('ai-input').placeholder = 'Сначала напиши что-то в песочнице!';
+    setTimeout(() => document.getElementById('ai-input').placeholder = 'Спроси что-нибудь или попроси изменить код…', 2000);
+    return;
+  }
+  if (!document.getElementById('ai-input').value.trim()) {
+    document.getElementById('ai-input').value = 'Проверь мой код и предложи улучшения';
+  }
+  aiSend(`Вот мой HTML-код из песочницы:\n\`\`\`html\n${code}\n\`\`\``);
+}
+
+function aiQuick(text) {
+  document.getElementById('ai-input').value = text;
+  aiSend();
+}
+
+function aiInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    aiSend();
+  }
+}
+
+window.addEventListener('load', () => {
+  run('t-text','p-text');
+  run('t-list','p-list');
+  run('t-table','p-table');
+  // Загрузить дефолтный сниппет в песочницу
+  document.getElementById('t-sandbox').value = SNIPPETS[9].code;
+  runSandbox();
+  updateStats();
+  // Восстановить чат из прошлой сессии
+  loadChatFromStorage();
+});
+</script>
+</body>
+</html>
